@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     member do
       post :like
       post :unlike
+      post :collect
+      post :uncollect
     end
   end
 

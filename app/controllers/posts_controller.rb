@@ -1,7 +1,15 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!, :only => [:create, :destroy]
   def index
-    @posts = Post.order("id DESC").all
+    @posts = Post.order("id DESC").limit(10)
+    if params[:max_id]
+      @posts = @posts.where( "id < ?", params[:max_id])
+    end
+
+    respond_to do |format|
+      format.html  # 如果客户端要求 HTML，则回传 index.html.erb
+      format.js    # 如果客户端要求 JavaScript，回传 index.js.erb
+    end
   end
 
   def create
@@ -14,6 +22,8 @@ class PostsController < ApplicationController
   def destroy
     @post = current_user.posts.find(params[:id])
     @post.destroy
+
+    render :json => { :id => @post.id }
   end
 
   def like
@@ -28,6 +38,20 @@ class PostsController < ApplicationController
     like = @post.find_like(current_user)
     like.destroy
     render "like"
+  end
+
+  def collect
+    @post = Post.find(params[:id])
+    unless @post.find_collect(current_user)
+      Favorite.create( :user => current_user, :post => @post)
+    end
+  end
+
+  def uncollect
+    @post = Post.find(params[:id])
+    favorite = @post.find_collect(current_user)
+    favorite.destroy
+    render "collect"
   end
 
   protected

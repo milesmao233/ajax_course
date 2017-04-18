@@ -1,0 +1,15 @@
+<% if post.collected_users.any?%>
+  <%= post.collected_users.map { |u| u.display_name }.join(",")%> 已收藏
+<% end %>
+
+<% if current_user %>
+  <% if post.find_collect(current_user)%>
+   <%= link_to uncollect_post_path(post), :method => :post, :remote => true, class: "btn btn-default" do %>
+     <span class="fa fa-heart"></span>
+   <% end %>
+  <% else %>
+   <%= link_to collect_post_path(post), :method => :post, :remote => true, class: "btn btn-default" do %>
+    <span class="fa fa-heart-o"></span>
+   <% end %>
+  <% end %>
+<% end %>
