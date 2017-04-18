@@ -12,6 +12,8 @@ Rails.application.routes.draw do
       post :unlike
       post :collect
       post :uncollect
+      post :toggle_flag
+      post :rate
     end
   end
 
